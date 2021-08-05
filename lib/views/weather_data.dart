@@ -15,19 +15,18 @@ class WeatherApp extends StatefulWidget {
 }
 
 class _WeatherAppState extends State<WeatherApp> {
+
   DataServices dataServices = DataServices();
 
   @override
   void initState() {
     // TODO: implement initState
-
     super.initState();
   }
 
   @override
   void setState(fn) {
     // TODO: implement setState
-
     super.setState(fn);
     print("set state called");
   }
@@ -38,6 +37,7 @@ class _WeatherAppState extends State<WeatherApp> {
     super.dispose();
     print("widget distroyed");
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,12 +47,12 @@ class _WeatherAppState extends State<WeatherApp> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 50.0),
+              padding: const EdgeInsets.only(top: 100.0),
               child: FutureBuilder<factResponse>(
                   future: dataServices.getData(widget.loc),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      var fm = new DateFormat('HH:mm dd EEE MM YYYY');
+                      var fm = new DateFormat('HH:mm dd EEE MM ');
                       var fm_hour = new DateFormat.Hm();
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -62,7 +62,7 @@ class _WeatherAppState extends State<WeatherApp> {
                             child: Text(
                               "${snapshot.data!.name}",
                               style: const TextStyle(
-                                fontSize: 30,
+                                fontSize: 40,
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'Overpass',
                                 color: Colors.black,
@@ -74,87 +74,166 @@ class _WeatherAppState extends State<WeatherApp> {
                             children: [
                               Image.network(
                                   "https://openweathermap.org/img/w/${snapshot.data!.weather[0].icon}.png"),
-                              Text(
-                                "${snapshot.data!.main.temp}",
-                                style: const TextStyle(
-                                  fontSize: 25,
-                                  fontWeight: FontWeight.bold, fontFamily: 'Overpass',
-                                  color: Colors.black,
-                                ),
+                              Row(
+                                children: [
+                                  Text(
+                                    (snapshot.data!.main.temp - 273.15)
+                                        .toInt()
+                                        .toString(),
+                                    style: const TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Overpass',
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Container(
+                                      height: 50,
+                                      width: 50,
+                                      child: Image.asset(
+                                        "assets/degreecelcius.png",
+                                        fit: BoxFit.cover,
+                                      )),
+                                ],
                               ),
                             ],
                           ),
-                          Text(
-                              "${fm.format(new DateTime.fromMillisecondsSinceEpoch(
-                                (snapshot.data!.dt * 1000),
-                              ))}",
-                              style: const TextStyle(
-                                fontSize: 20, fontFamily: 'Overpass',
-                                color: Colors.black,
-                              )),
-                          Center(
+                          SizedBox(height: 15),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              "${snapshot.data!.weather[0].description}",
+                                "${fm.format(new DateTime.fromMillisecondsSinceEpoch(
+                                  (snapshot.data!.dt * 1000),
+                                ))}",
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontFamily: 'Overpass',
+                                  color: Colors.black,
+                                )),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Center(
+                              child: Text(
+                                "${snapshot.data!.weather[0].description}",
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontFamily: 'Overpass',
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Min Temp:  ${(snapshot.data!.main.tempMin - 273.15).toInt()}",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: 'Overpass',
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Container(
+                                    height: 15,
+                                    width: 50,
+                                    child: Image.asset(
+                                      "assets/degreecelcius.png",
+                                      fit: BoxFit.cover,
+                                    )),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Max Temp:  ${(snapshot.data!.main.tempMax - 273.15).toInt()}",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: 'Overpass',
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Container(
+                                    height: 15,
+                                    width: 50,
+                                    child: Image.asset(
+                                      "assets/degreecelcius.png",
+                                      fit: BoxFit.cover,
+                                    )),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Wind(speed/deg):  ${snapshot.data!.wind.speed}/${snapshot.data!.wind.deg}",
                               style: const TextStyle(
-                                fontSize: 20, fontFamily: 'Overpass',
+                                fontSize: 20,
+                                fontFamily: 'Overpass',
                                 color: Colors.black,
                               ),
                             ),
                           ),
-                          Text(
-                            "Min Temp:${snapshot.data!.main.tempMin}",
-                            style: const TextStyle(
-                              fontSize: 20, fontFamily: 'Overpass',
-                              color: Colors.black,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Pressure:  ${snapshot.data!.main.pressure} hpa",
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Overpass',
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                          Text(
-                            "Max Temp:${snapshot.data!.main.tempMax}/${snapshot.data!.wind.deg}",
-                            style: const TextStyle(
-                              fontSize: 20, fontFamily: 'Overpass',
-                              color: Colors.black,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Humidity:  ${snapshot.data!.main.humidity}%",
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Overpass',
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                          Text(
-                            "Wind(speed/deg):${snapshot.data!.wind.speed}/${snapshot.data!.wind.deg}",
-                            style: const TextStyle(
-                              fontSize: 20, fontFamily: 'Overpass',
-                              color: Colors.black,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Sunrise:  ${fm_hour.format(new DateTime.fromMillisecondsSinceEpoch((snapshot.data!.sys.sunrise * 1000), isUtc: true))}",
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Overpass',
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                          Text(
-                            "Pressure ${snapshot.data!.main.pressure} hpa",
-                            style: const TextStyle(
-                              fontSize: 20, fontFamily: 'Overpass',
-                              color: Colors.black,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Sunset:  ${fm_hour.format(new DateTime.fromMillisecondsSinceEpoch((snapshot.data!.sys.sunset * 1000), isUtc: true))}",
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Overpass',
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                          Text(
-                            "Humidity ${snapshot.data!.main.humidity}%",
-                            style: const TextStyle(
-                              fontSize: 20, fontFamily: 'Overpass',
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(
-                            "Sunrise ${fm_hour.format(new DateTime.fromMillisecondsSinceEpoch((snapshot.data!.sys.sunrise * 1000), isUtc: true))}",
-                            style: const TextStyle(
-                              fontSize: 20, fontFamily: 'Overpass',
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(
-                            "Sunset ${fm_hour.format(new DateTime.fromMillisecondsSinceEpoch((snapshot.data!.sys.sunset * 1000), isUtc: true))}",
-                            style: const TextStyle(
-                              fontSize: 20, fontFamily: 'Overpass',
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(
-                            "GeoCode: [${snapshot.data!.coord.lat}/${snapshot.data!.coord.lon}]",
-                            style: const TextStyle(
-                              fontSize: 20, fontFamily: 'Overpass',
-                              color: Colors.black,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "GeoCode:  [${snapshot.data!.coord.lat}/${snapshot.data!.coord.lon}]",
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'Overpass',
+                                color: Colors.black,
+                              ),
                             ),
                           )
                         ],
